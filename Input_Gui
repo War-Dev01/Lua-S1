@@ -1,0 +1,54 @@
+local tool = script.Parent.Parent
+local gunInfo = require(tool.Scripts.GunInfo_Module)
+local UIP = game:GetService("UserInputService")
+local updateGuiEvent = tool:WaitForChild("Events"):WaitForChild("UpdateGUI")
+local screenGui = tool:WaitForChild("Gui"):WaitForChild("ScreenGui")
+local player = game.Players.LocalPlayer
+
+local clone = nil
+
+--gui clone
+tool.Equipped:Connect(function()
+	clone = tool.Gui.ScreenGui:Clone()
+	clone.Name = gunInfo["Gui Name"]
+	clone.Parent = player.PlayerGui
+	
+	updateGuiEvent:FireServer("update")
+end)
+
+--destroy gui clone
+tool.Unequipped:Connect(function()
+	if clone and clone.Parent then
+		clone:Destroy()
+		clone = nil
+	end
+end)
+
+--update ammo and reserve gui
+updateGuiEvent.OnClientEvent:Connect(function(currentAmmo, currentReserve)
+	local guiName = gunInfo["Gui Name"]
+	local gui = player:WaitForChild("PlayerGui"):FindFirstChild(guiName)
+	
+	if gui then
+	local ammoLabel = gui:FindFirstChild("ammo", true) -- true = search descendants
+	local reserveLabel = gui:FindFirstChild("ammoReserve", true)
+
+	if ammoLabel then
+		ammoLabel.Text = tostring(currentAmmo)
+	end
+	
+	if reserveLabel then
+		reserveLabel.Text = tostring(currentReserve)
+		end
+	end
+end)
+
+--fires to Main; reloads gun
+UIP.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.R then
+		updateGuiEvent:FireServer("reload")
+	elseif input.KeyCode == Enum.UserInputType.MouseButton1 then
+		
+	end
+end)
