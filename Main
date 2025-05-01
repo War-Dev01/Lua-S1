@@ -1,1 +1,81 @@
+local tool = script.Parent.Parent
+repeat wait() until game.Players:GetPlayerFromCharacter(tool.Parent) ~= nil
+local player = game.Players:GetPlayerFromCharacter(tool.Parent)
+
+local updateGuiEvent = tool.Events:WaitForChild("UpdateGUI")
+local gunInfo = require(script.Parent:WaitForChild("GunInfo_Module"))
+local shootBullet = tool.Events:WaitForChild("shootBullet")
+
+local maxAmmo = gunInfo["Max Ammo"]
+local reserveAmmo = gunInfo["Ammo Reserve"]
+local currentAmmo = maxAmmo
+local currentReserve = reserveAmmo
+updateGuiEvent:FireClient(player, currentAmmo, currentReserve)
+
+--Set Sounds for weapon
+tool.Sfx:WaitForChild("shootSound").SoundId = gunInfo.shootSound
+tool.Sfx:WaitForChild("reloadSound").SoundId = gunInfo.reloadSound
+
+--+sfx handler
+local function playSFX(action)
+	if action == "shoot" then
+		tool.Sfx.shootSound:Play()
+	elseif action == "reload" then
+		tool.Sfx.reloadSound:Play()
+	end
+end
+
+--
+local isShooting = false
+local shootDelay = false
+tool.Activated:Connect(function()
+	if currentAmmo > 0 then
+		isShooting = true
+		while isShooting do
+			task.wait()
+			if not shootDelay then
+				shootDelay = true
+				playSFX("shoot")
+				shootBullet:FireClient(player)
+				currentAmmo -= 1
+				updateGuiEvent:FireClient(player, currentAmmo, currentReserve)
+				if currentAmmo == 0 then
+					isShooting = false
+				end
+				wait(gunInfo["Fire Rate"])
+				shootDelay = false
+			end
+		end
+	end
+end)
+
+--+
+tool.Deactivated:Connect(function()
+	isShooting = false
+end)
+
+--Reload Weapon and play sfx
+updateGuiEvent.OnServerEvent:Connect(function(player, action)
+	if action == "update" then
+		updateGuiEvent:FireClient(player, currentAmmo, currentReserve)
+
+	elseif action == "reload" then
+		if currentReserve > 0 and currentAmmo < maxAmmo then
+			tool.Enabled = false
+			playSFX(action)
+			wait(1.85)
+
+			local needed = maxAmmo - currentAmmo
+			local toReload = math.min(needed, currentReserve)
+
+			currentAmmo += toReload
+			currentReserve -= toReload
+
+			updateGuiEvent:FireClient(player, currentAmmo, currentReserve)
+			tool.Enabled = true
+		end
+	end
+end)
+
+
 
