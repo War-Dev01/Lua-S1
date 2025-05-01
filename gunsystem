@@ -1,0 +1,26 @@
+local tool = script.Parent.Parent
+local damageEvent = tool.Events:WaitForChild("Damage")
+local gunInfo = require(script.Parent.GunInfo_Module)
+
+damageEvent.OnServerEvent:Connect(function(player, character, bodyPart)	
+	
+	local humanoid = character:FindFirstChild("Humanoid")
+	
+	if humanoid then
+		if character.Name == player.Name then return end
+		local finalDamage = gunInfo.Damage
+
+		if bodyPart.Name == "Head" then
+			finalDamage = gunInfo.Damage * 2.45
+		elseif bodyPart.Name == "Torso" or bodyPart.Name == "HumanoidRootPart" or bodyPart.Name == "Right Arm" or bodyPart.Name == "Left Arm" then
+			finalDamage = gunInfo.Damage 
+		elseif bodyPart.Name == "Left Leg" or bodyPart.Name == "Right Leg" then
+			finalDamage = gunInfo.Damage * 0.75 
+		end
+		
+		humanoid:TakeDamage(finalDamage)
+		print("{",finalDamage .. " damage","}", humanoid.Health .. " Health", "{", character,"}", bodyPart)
+	end
+end)
+
+
