@@ -1,0 +1,30 @@
+local tool = script.Parent.Parent
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local workspace = game:GetService("Workspace")
+local damageEvent = tool.Events:WaitForChild("Damage")
+local shootBullet = tool.Events:WaitForChild("shootBullet")
+local info_module = require(tool.Scripts.GunInfo_Module)
+local rayLength = 500
+
+shootBullet.OnClientEvent:Connect(function()
+	local camera = workspace.CurrentCamera
+	local rayOrigin = camera.CFrame.Position
+	local rayDirection = camera.CFrame.LookVector * rayLength
+
+	local raycastParams = RaycastParams.new()
+	raycastParams.FilterDescendantsInstances = {player.Character}
+	raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+	raycastParams.IgnoreWater = true
+
+	local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+	if raycastResult then
+		local hit = raycastResult.Instance
+		print(hit.Name .. " hit")
+
+		if hit:FindFirstAncestorWhichIsA("Model") and hit:FindFirstAncestorWhichIsA("Model"):FindFirstChild("Humanoid") then
+			damageEvent:FireServer(hit:FindFirstAncestorWhichIsA("Model"), hit)
+		end
+	end
+end)
