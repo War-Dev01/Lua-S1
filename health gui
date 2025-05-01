@@ -9,7 +9,6 @@ local red = Color3.fromRGB(199, 0, 0)
 local function healthUpdate()
 	textLabel.Text = "Health: " .. math.round(humanoid.Health)
     humanoid.HealthChanged:Connect(function(health)
-        -- We need to check if the changed property is "Health"
         if health then
             textLabel.Text = "Health: " .. math.round(humanoid.Health)
         end
