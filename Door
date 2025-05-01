@@ -1,0 +1,36 @@
+local SoundOpen = script.Parent.door_open
+local SoundClose = script.Parent.door_close
+local DoorModel = script.Parent
+local Door = script.Parent.Part
+local Hinge = script.Parent.Hinge
+local active = false
+
+local TweenService = game:GetService("TweenService")
+
+local tweenInfo = TweenInfo.new(
+	1,
+	Enum.EasingStyle.Sine,
+	Enum.EasingDirection.Out,				--info on how it moves, and how long it takes
+	0,
+	false,
+	0
+)
+
+local Close = {	CFrame = Hinge.CFrame * CFrame.Angles(0, math.rad(0), 0)}		
+local Open = {	CFrame = Hinge.CFrame * CFrame.Angles(0, math.rad(-90), 0)}
+
+local CloseTween = TweenService:Create(Hinge, tweenInfo, Close)
+local OpenTween =TweenService:Create(Hinge, tweenInfo, Open)
+
+DoorModel:WaitForChild("ProximityPrompt").Triggered:Connect(function()
+	if active == false then
+		active = true
+		SoundOpen:Play()		--on
+		OpenTween:Play()
+	
+	else 
+		active = false
+		SoundClose:Play()		--off
+		CloseTween:Play()
+	end
+end)
