@@ -1,0 +1,30 @@
+local player = game.Players.LocalPlayer
+local humanoid = player.Character:WaitForChild("Humanoid")
+local textLabel = player.PlayerGui:WaitForChild("ScreenGui"):WaitForChild("Frame"):WaitForChild("TextLabel")
+
+local green = Color3.fromRGB(44, 115, 0)
+local yellow = Color3.fromRGB(185, 173, 0)
+local red = Color3.fromRGB(199, 0, 0)
+
+local function healthUpdate()
+	textLabel.Text = "Health: " .. math.round(humanoid.Health)
+    humanoid.HealthChanged:Connect(function(health)
+        -- We need to check if the changed property is "Health"
+        if health then
+            textLabel.Text = "Health: " .. math.round(humanoid.Health)
+        end
+		
+		if humanoid.Health >=80 then
+			textLabel.BackgroundColor3 = green
+		elseif humanoid.Health >=50 then 
+			textLabel.BackgroundColor3 = yellow
+		else
+			if humanoid.Health <= 49 then
+			textLabel.BackgroundColor3 = red
+			end
+		end
+		
+    end)
+end
+healthUpdate()
+
