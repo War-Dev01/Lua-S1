@@ -1,0 +1,17 @@
+local gunInfo = {
+	["Damage"] = 20,
+	["Max Ammo"] = 30,
+	["Ammo Reserve"] = 120,
+	["Reload Time"] = "" ,
+	["Fire Rate"] = 0.1,
+	["Gui Name"] = "Ak545GUI",
+	
+	--Sounds
+	["shootSound"] = "rbxassetid://5674896655",
+	["reloadSound"] = "rbxassetid://1905403158",
+	["equipSound"] = "",
+	["unequipSound"] = "",
+	
+	--Animations
+}
+return gunInfo
