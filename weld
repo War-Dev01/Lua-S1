@@ -1,0 +1,18 @@
+local tool = script.Parent.Parent
+local handle = tool:WaitForChild("Handle")
+
+local function weldGun()
+	for _, part in pairs(tool:GetDescendants()) do
+		if part:IsA("MeshPart") or part:IsA("Part") then
+			if part ~= handle then
+				local weld = Instance.new("Weld")
+				weld.Part0 = handle
+				weld.Part1 = part
+				weld.C0 = handle.CFrame:inverse() * part.CFrame
+				weld.C1 = CFrame.new()
+				weld.Parent = handle
+			end
+		end
+	end
+end
+weldGun()
