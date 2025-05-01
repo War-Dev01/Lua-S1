@@ -1,0 +1,23 @@
+local EventSound = game.Workspace.ScriptedEvent.EventPart.Sound
+local EventPart = script.parent
+
+local Boards = workspace.ScriptedEvent.Boards
+local Parts = Boards:GetChildren()
+
+local Anvil = workspace.ScriptedEvent.Anvil
+local touch = false
+
+function AnvilDropEvent()
+	if not touch then
+		touch = true
+		for i in Parts do
+			Parts[i].Anchored = false
+		end
+		EventSound:Play()		
+		Anvil.Anchored = false
+		task.wait()
+		
+	end
+end
+EventPart.Touched:Connect(AnvilDropEvent)
+
